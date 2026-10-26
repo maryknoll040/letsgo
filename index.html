@@ -214,6 +214,105 @@
             transform: scale(1.02);
             box-shadow: 0 0 10px rgba(246, 193, 119, 0.4);
         }
+
+        /* ===== LIGHT MODE 8-BIT STYLING ===== */
+        body.light-mode {
+            background-color: #eae7dc;
+            background-image: 
+                radial-gradient(#cbc4b3 15%, transparent 16%),
+                radial-gradient(#b8b09d 15%, transparent 16%);
+            color: #18181b;
+        }
+
+        body.light-mode .crt-overlay {
+            background: linear-gradient(rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.06) 50%), 
+                        linear-gradient(90deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.01), rgba(0, 0, 255, 0.02));
+        }
+
+        body.light-mode .pixel-border {
+            background-color: #ffffff;
+            border-color: #000000;
+            box-shadow: 
+                -4px 0 0 0 #000,
+                 4px 0 0 0 #000,
+                 0 -4px 0 0 #000,
+                 0  4px 0 0 #000,
+                 6px 6px 0px 0px #94a3b8;
+        }
+
+        body.light-mode .pixel-border-gold {
+            background-color: #fffdf5;
+            border-color: #d97706;
+            box-shadow: 
+                -4px 0 0 0 #000,
+                 4px 0 0 0 #000,
+                 0 -4px 0 0 #000,
+                 0  4px 0 0 #000,
+                 6px 6px 0px 0px #f59e0b;
+        }
+
+        body.light-mode header {
+            background-color: #ffffff !important;
+            border-bottom-color: #000000 !important;
+        }
+
+        body.light-mode footer {
+            background-color: #f1f5f9 !important;
+            border-top-color: #cbd5e1 !important;
+            color: #475569 !important;
+        }
+
+        body.light-mode .bg-slate-950,
+        body.light-mode .bg-slate-900,
+        body.light-mode .bg-slate-950\/80,
+        body.light-mode .bg-indigo-950\/50 {
+            background-color: #f8fafc !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+
+        body.light-mode .text-slate-200,
+        body.light-mode .text-slate-300,
+        body.light-mode .text-slate-400 {
+            color: #334155 !important;
+        }
+
+        body.light-mode .text-yellow-300,
+        body.light-mode .text-yellow-400 {
+            color: #b45309 !important;
+        }
+
+        body.light-mode .text-cyan-200,
+        body.light-mode .text-cyan-300 {
+            color: #0369a1 !important;
+        }
+
+        body.light-mode .text-purple-200,
+        body.light-mode .text-purple-300,
+        body.light-mode .text-purple-400 {
+            color: #6b21a8 !important;
+        }
+
+        body.light-mode .text-white {
+            color: #000000 !important;
+        }
+
+        body.light-mode .char-card {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        body.light-mode .char-card:hover, 
+        body.light-mode .char-card.selected {
+            background: #fef3c7;
+            border-color: #d97706;
+            box-shadow: 0 0 10px rgba(217, 119, 6, 0.4);
+        }
+
+        body.light-mode .pixel-bar-bg {
+            background-color: #e2e8f0;
+            border-color: #000000;
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen text-slate-100 antialiased selection:bg-purple-500 selection:text-white">
@@ -237,8 +336,15 @@
                 </div>
             </div>
 
-            <!-- Stage & Credit Display -->
-            <div class="flex items-center gap-4 font-arcade text-xs">
+            <!-- Stage, Credit Display & Mode Toggle -->
+            <div class="flex items-center gap-3 font-arcade text-xs">
+                
+                <!-- Dark / Light Mode Toggle Button -->
+                <button onclick="toggleTheme()" id="theme-toggle-btn" class="pixel-btn px-2.5 py-1 text-xs font-bold flex items-center gap-1.5 cursor-pointer bg-slate-800 text-yellow-300 border-2 border-white">
+                    <i id="theme-toggle-icon" class="fa-solid fa-moon"></i>
+                    <span id="theme-toggle-text" class="hidden sm:inline">DARK</span>
+                </button>
+
                 <div id="credit-badge" class="hidden sm:flex items-center gap-1 bg-slate-900 border-2 border-yellow-400 px-2.5 py-1 text-yellow-400">
                     <i class="fa-solid fa-coins animate-pulse"></i>
                     <span>CREDIT 01</span>
@@ -565,7 +671,7 @@
 
     <!-- Footer -->
     <footer class="w-full text-center py-3 text-xs text-slate-500 border-t-2 border-slate-800 bg-slate-950">
-        <p>《時光之舵》8-BIT 復古教學遊戲 &copy; 2026 | 時間管理教育導向設計</p>
+        <p>《時光之舵》8-BIT 復古教學遊戲 &copy; | 瑪利諾中學T40韋sir</p>
     </footer>
 
     <!-- 8-Bit Chiptune Web Audio FX Engine -->
@@ -665,6 +771,30 @@
 
     <!-- Game Logic & Animations Script -->
     <script>
+        // Theme Switcher Function
+        function toggleTheme() {
+            if (typeof audio !== 'undefined' && audio.playSelect) {
+                audio.playSelect();
+            }
+            const body = document.body;
+            const isLight = body.classList.toggle('light-mode');
+            const icon = document.getElementById('theme-toggle-icon');
+            const text = document.getElementById('theme-toggle-text');
+            const btn = document.getElementById('theme-toggle-btn');
+
+            if (isLight) {
+                icon.className = 'fa-solid fa-sun text-amber-500';
+                text.innerText = 'LIGHT';
+                btn.style.backgroundColor = '#fef3c7';
+                btn.style.color = '#78350f';
+            } else {
+                icon.className = 'fa-solid fa-moon text-yellow-300';
+                text.innerText = 'DARK';
+                btn.style.backgroundColor = '#1e293b';
+                btn.style.color = '#fde047';
+            }
+        }
+
         // Character Config
         const characters = {
             scholar: { name: "熱血學霸", sprite: "👨‍🎓", bonus: { knowledge: 10, discipline: 5, health: 0, potential: 0 } },
